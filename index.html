@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css"
+          integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="script.js"></script>
+    <title>iRave</title>
+</head>
+<body class="all flex" onload="currentTime()">
+<div id="giant-div">
+    <div id="home-button" onclick="lockButton()"><div></div></div>
+    <div id="lock-button" onclick="homeButton()"><div></div></div>
+    <div class="screen">
+        <!--LOCK-->
+        <div id="lockScreen" class="subscreen lockScreen">
+            <div id="time-lock" class="time"></div>
+            <div id="date-lock" class="date"></div>
+        </div>
+        <!--HOME-->
+        <div id="home" class="subscreen home">
+            <a id="friends-button" class="top-right button" onclick="loadFriends(); changeScreen('friends')">
+                <i aria-hidden="true" class="fas fa-users"></i>
+            </a>
+            <a id="tickets-button" class="top-left button" onclick="loadPlaces(); changeScreen('tickets')">
+                <i aria-hidden="true" class="fas fa-compass"></i>
+            </a>
+            <a id="calendar-button" class="bot-left button" onclick="loadCalendar(); changeScreen('calendar')">
+                <i aria-hidden="true" class="fas fa-calendar-alt"></i>
+            </a>
+            <a id="location-button" class="bot-right button active" onclick="toggleLocation()">
+                <i id="location-icon" aria-hidden="true" class="fas fa-map-marker-alt"></i>
+            </a>
+            <div id="time" class="time"></div>
+            <div id="date" class="date"></div>
+            <div id="notification" class="subscreen notifications"></div>
+            <div id="notification-phrase" class="subscreen">
+                <div id="phrase"></div>
+            </div>
+        </div>
+        <!--CALENDAR-->
+        <div id="calendar" class="subscreen calendar">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div>Calendar</div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                   onclick="loadCalendarFavorites(); changeScreen('calendar-favorites')"></i>
+            </div>
+        </div>
+        <div id="stages" class="subscreen calendar">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div id="stages-title"></div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                   onclick="loadCalendarFavorites(); changeScreen('calendar-favorites')"></i>
+            </div>
+        </div>
+        <div id="shows" class="subscreen calendar">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div id="shows-title"></div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                   onclick="loadCalendarFavorites(); changeScreen('calendar-favorites')"></i>
+            </div>
+        </div>
+        <div id="calendar-favorites" class="subscreen calendar">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left"
+                   onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div>Favorites</div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-sync-alt"
+                   onclick="loadCalendarFavorites()"></i>
+            </div>
+            <div id="empty-calendar-favorites">Click on <i id="favorites" aria-hidden="true"
+                                                           class="favorites fas fa-star"></i> to add to favorites
+            </div>
+        </div>
+        <!--FRIENDS-->
+        <div id="friends" class="subscreen friends">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div>Friends</div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                   onclick="loadFriendFavorites(); changeScreen('friends-favorites')"></i>
+            </div>
+        </div>
+        <div id="friends-favorites" class="subscreen friends">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left"
+                   onclick="loadFriends(); changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div>Favorites</div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-sync-alt"
+                   onclick="loadFriendFavorites()"></i>
+            </div>
+            <div id="empty-friends-favorites">Click on <i id="favorites" aria-hidden="true"
+                                                          class="favorites fas fa-star"></i> to add to favorites
+            </div>
+        </div>
+        <div id="friend" class="subscreen friends">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div id="friend-title"></div>
+                </div>
+                <i id="delete" aria-hidden="true" class="fas fa-trash-alt"
+                   onclick="changeScreen('remove-friend-confirmation')"></i>
+            </div>
+            <div id="arrow-box"><i id="arrow" aria-hidden="true" class="fas fa-location-arrow"></i></div>
+            <div id="friend-distance"></div>
+            <div id="friend-location"></div>
+        </div>
+        <div id="add-friend-nfc" class="subscreen">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left"
+                   onclick="changeScreenBack(); clearTimeout(friendTimeout)"></i>
+                <div id="slide-parent">
+                    <div id="friend-title">Add Friend</div>
+                </div>
+            </div>
+            <div id="nfc-box"><i id="nfc" aria-hidden="true" class="fas fa-wifi"></i></div>
+            <div id="nfc-phrase">Searching nearby friends...</div>
+        </div>
+        <div id="add-friend-confirmation" class="subscreen">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left"
+                   onclick="removeScreenHistory(['add-friend-nfc']); changeScreenBack();"></i>
+                <div id="slide-parent">
+                    <div id="friend-title">Add Friend</div>
+                </div>
+            </div>
+            <div id="friend-confirmation-phrase">Do you want to add
+                <div id="friend-to-add"></div>
+                to your friends list?
+            </div>
+            <div id="confirmation-button">
+                <div id="confirmation-button-yes"
+                     onclick="addFriend(); loadFriends(); removeScreenHistory(['add-friend-nfc']); changeScreenBack()">
+                    <i
+                            aria-hidden="true" class="fas fa-check"></i></div>
+                <div id="confirmation-button-no" onclick="askAddFriend(); changeScreenBack()"><i aria-hidden="true"
+                                                                                                 class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+        <div id="remove-friend-confirmation" class="subscreen">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div>Delete Friend</div>
+                </div>
+            </div>
+            <div id="confirmation-phrase">Do you want to remove
+                <div id="friend-to-remove"></div>
+                from your friends list?
+            </div>
+            <div id="confirmation-button">
+                <div id="confirmation-button-yes"
+                     onclick="removeFriend(); loadFriends(); loadFriendFavorites(); removeScreenHistory(['friend']); changeScreenBack()">
+                    <i aria-hidden="true" class="fas fa-check"></i></div>
+                <div id="confirmation-button-no" onclick="changeScreenBack()"><i aria-hidden="true"
+                                                                                 class="fas fa-times"></i></div>
+            </div>
+        </div>
+        <!--TICKETS-->
+        <div id="tickets" class="subscreen tickets">
+            <div class="title">
+                <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                <div id="slide-parent">
+                    <div>Places</div>
+                </div>
+                <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                   onclick="loadPlacesFavorites(); changeScreen('places-favorites')"></i>
+            </div>
+            <div id="listPlaces" class="vertical-menu">
+                <a id="myTickets-item" class="item" onclick="loadTickets(); changeScreen('myTickets')"><i
+                        id="ticket-image"
+                        aria-hidden="true"
+                        class="fas fa-ticket-alt ticket-button"></i>My
+                    Tickets</a>
+                <a id="place-stages-item" class="item" onclick="changeScreen('place-stages')"><i aria-hidden="true"
+                                                                                                 class="fas fa-music"></i>Stages</a>
+                <a id="bars-item" class="item" onclick="changeScreen('bars')"><i aria-hidden="true"
+                                                                                 class="fas fa-beer"></i>Bars</a>
+                <a id="wc-item" class="item" onclick="changeScreen('wc')"><img id="wc-image" class="fas" src="wc.svg">WC</a>
+                <a id="others-item" class="item" onclick="changeScreen('others')"><i aria-hidden="true"
+                                                                                     class="fas fa-flag"></i>Activities</a>
+            </div>
+        </div>
+        <div id="places-submenu">
+            <div id="myTickets" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>My Tickets</div>
+                    </div>
+                </div>
+                <div id="empty-places-tickets">Click on <i id="favorites" aria-hidden="true"
+                                                           class="favorites fas fa-ticket-alt ticket-button"></i> to
+                    take a
+                    ticket to a place
+                </div>
+            </div>
+            <div id="ticket" class="subscreen tickets ">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div id="ticket-title"></div>
+                    </div>
+                    <i id="delete" aria-hidden="true" class="fas fa-trash-alt"
+                       onclick="changeScreen('remove-ticket-confirmation')"></i>
+                </div>
+                <div id="qr-code-box"><img id="qr-code" src="qr-code.png"/></div>
+                <div id="tickets-left"></div>
+                <div id="ewt"></div>
+            </div>
+            <div id="ticket-confirmation" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left"
+                       onclick="changeScreenBack();"></i>
+                    <div id="slide-parent">
+                        <div id="friend-title">Take Ticket</div>
+                    </div>
+                </div>
+                <div id="ticket-confirmation-phrase">Taking a ticket for
+                    <div id="place-to-ticket"></div>
+                    Are you sure?
+                </div>
+                <div id="confirmation-button">
+                    <div id="confirmation-button-yes"
+                         onclick="takeTicket(); changeScreenBack()"><i
+                            aria-hidden="true" class="fas fa-check"></i></div>
+                    <div id="confirmation-button-no" onclick="changeScreenBack()"><i aria-hidden="true"
+                                                                                     class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="remove-ticket-confirmation" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>Remove Ticket</div>
+                    </div>
+                </div>
+                <div id="ticket-confirmation-phrase">Canceling ticket for
+                    <div id="ticket-to-remove"></div>
+                    Are you sure?
+                </div>
+                <div id="confirmation-button">
+                    <div id="confirmation-button-yes"
+                         onclick="removeTicket(); loadTickets(); removeScreenHistory(['ticket']); changeScreenBack()">
+                        <i aria-hidden="true" class="fas fa-check"></i></div>
+                    <div id="confirmation-button-no" onclick="changeScreenBack()"><i aria-hidden="true"
+                                                                                     class="fas fa-times"></i></div>
+                </div>
+            </div>
+
+            <div id="place" class="subscreen tickets ">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div id="place-title"></div>
+                    </div>
+                    <i id="ticket-button" aria-hidden="true" class="fas fa-ticket-alt ticket-button"></i>
+                </div>
+                <div id="place-arrow-box"><i id="place-arrow" aria-hidden="true" class="fas fa-location-arrow"></i>
+                </div>
+                <div id="place-distance"></div>
+                <div id="place-ewt"></div>
+            </div>
+            <div id="place-stages" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>Stages</div>
+                    </div>
+                    <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                       onclick="loadPlacesFavorites(); changeScreen('places-favorites')"></i>
+                </div>
+            </div>
+            <div id="bars" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>Bars</div>
+                    </div>
+                    <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                       onclick="loadPlacesFavorites(); changeScreen('places-favorites')"></i>
+                </div>
+            </div>
+            <div id="wc" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>WC</div>
+                    </div>
+                    <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                       onclick="loadPlacesFavorites(); changeScreen('places-favorites')"></i>
+                </div>
+            </div>
+            <div id="others" class="subscreen tickets">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left" onclick="changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>Activities</div>
+                    </div>
+                    <i id="favorites" aria-hidden="true" class="favorites fas fa-star"
+                       onclick="loadPlacesFavorites(); changeScreen('places-favorites')"></i>
+                </div>
+            </div>
+            <div id="places-favorites" class="subscreen friends">
+                <div class="title">
+                    <i id="back-button" aria-hidden="true" class="fas fa-chevron-left"
+                       onclick="loadPlaces(); changeScreenBack()"></i>
+                    <div id="slide-parent">
+                        <div>Favorites</div>
+                    </div>
+                    <i id="favorites" aria-hidden="true" class="favorites fas fa-sync-alt"
+                       onclick="loadPlacesFavorites()"></i>
+                </div>
+                <div id="empty-places-favorites">Click on <i id="favorites" aria-hidden="true"
+                                                             class="favorites fas fa-star"></i> to add to favorites
+                </div>
+            </div>
+        </div>
+        <!--Others-->
+    </div>
+</div>
+</body>
+</html>
